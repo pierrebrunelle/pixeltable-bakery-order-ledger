@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use or adapt this example app, please cite it using these metadata."
+type: software
+title: "Bakery Order Ledger audit trail built with Pixeltable"
+abstract: "Bakery order ledger with a built-in audit trail: every edit is a Pixeltable table version, so you can read the ledger as of any version, diff two versions by order, restore a deleted order, freeze end-of-day snapshots and roll back a bad bulk edit."
+authors:
+  - given-names: "Pierre"
+    family-names: "Brunelle"
+repository-code: "https://github.com/pierrebrunelle/pixeltable-bakery-order-ledger"
+url: "https://pierrebrunelle.github.io/awesome-pixeltable-apps/"
+license: Apache-2.0
+version: "0.1.0"
+date-released: 2026-10-22
+keywords:
+  - "pixeltable"
+  - "pixeltable-example"
+  - "python"
+  - "data-versioning"
+  - "audit-trail"
+  - "time-travel"
+  - "bakery"
+  - "udf"
+  - "cli"
+  - "cloud"
