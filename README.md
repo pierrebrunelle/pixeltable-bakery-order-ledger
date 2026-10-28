@@ -37,11 +37,11 @@
 
 ## Notes
 
-- Keep snapshots **outside** the schema directory (`bakery_snapshots/`, not `bakery/snapshots/`): `pxt schema prune app.py bakery` drops every table under `bakery/` that `app.py` does not define, and snapshots count. `pxt schema diff` lists them as `extra (not in schema)` first.
+- Keep snapshots **outside** the schema directory (`bakery_snapshots/`, not `bakery/snapshots/`): `pxt schema prune app.py bakery` drops every table under `bakery/` that `app.py` does not define, and snapshots count. `pxt schema diff` lists them as `extra (not in schema)` first. On Pixeltable Cloud the tables sit at the database root, so `audit.py --target pxt://<your-org>:<your-db>` puts snapshots in `snapshots/` there; `pxt schema prune` on that database would drop them too.
 - `revert()` removes the latest version for good; a version that a snapshot references cannot be reverted past.
 - The oven-slot UDF takes the pickup **hour** from `pixeltable.functions.timestamp.hour()` instead of the raw timestamp, so it always works in the configured time zone (`pixeltable.time_zone`), whether a row was inserted or updated.
 - Changing a computed column's expression in `app.py` and running `pxt schema update` keeps the stored values; run the `pxt recompute bakery/orders slot -f` it prints to refresh them.
-- Every command takes `--target pxt://<your-org>:<your-db>/bakery` to run the same audit against Pixeltable Cloud.
+- Every command takes `--target pxt://<your-org>:<your-db>` to run the same audit against Pixeltable Cloud.
 
 ## What's inside
 
@@ -117,7 +117,7 @@ The same `app.py` runs on [Pixeltable Cloud](https://pixeltable.com). Sign in (o
 pxt login                       # or: export PIXELTABLE_API_KEY=<your-api-key>
 # edit pixeltable.toml: name = 'pxt://<your-org>:<your-db>'
 pxt db update pxt://<your-org>:<your-db>                 # build the image and upload the project
-pxt schema update app.py pxt://<your-org>:<your-db>/bakery   # create the tables in the hosted database
+pxt schema update app.py pxt://<your-org>:<your-db>       # create the tables at the database root (no per-app folder)
 ```
 
 Keep keys in environment variables or `pxt secret set`, never in code.

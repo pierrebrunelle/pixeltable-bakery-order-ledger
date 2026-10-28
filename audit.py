@@ -10,7 +10,7 @@
     python audit.py fingerprint --out a.json  # per-version row count + revenue, to check a catalog after an upgrade
     python audit.py fingerprint --against a.json
 
-Every command takes --target (default 'bakery'); use pxt://<org>:<db>/bakery for a cloud database.
+Every command takes --target (default 'bakery'); use pxt://<org>:<db> for a cloud database.
 """
 
 from __future__ import annotations
@@ -134,12 +134,22 @@ def cmd_restore(a) -> None:
     log(a.target, 'audit', f'restore {a.order_id} from v{a.version}')
 
 
+def sibling_dir(target: str, suffix: str) -> str:
+    """`name` -> `name_<suffix>` next to the schema dir; a cloud database root `pxt://<org>:<db>` -> `pxt://<org>:<db>/<suffix>`."""
+    _, sep, rest = target.partition('://')
+    if sep and '/' not in rest:  # a cloud database root: the tables sit there, so use a subdirectory
+        return f'{target}/{suffix}'
+    return f'{target}_{suffix}'
+
+
 def cmd_snapshot(a) -> None:
     # Snapshots live next to the schema target, not inside it: `pxt schema prune app.py bakery` drops every
-    # table under bakery/ that app.py does not define, and that includes snapshots.
-    pxt.create_dir(f'{a.target}_snapshots', if_exists='ignore')
-    snap = pxt.create_snapshot(f'{a.target}_snapshots/{a.name}', orders(a.target), if_exists='replace_force')
-    print(f'snapshot {a.target}_snapshots/{a.name}: {snap.count()} rows at orders v{version_of(orders(a.target))}')
+    # table under bakery/ that app.py does not define, and that includes snapshots. On a cloud database the
+    # tables sit at the root, so snapshots go to <db>/snapshots.
+    snaps = sibling_dir(a.target, 'snapshots')
+    pxt.create_dir(snaps, if_exists='ignore')
+    snap = pxt.create_snapshot(f'{snaps}/{a.name}', orders(a.target), if_exists='replace_force')
+    print(f'snapshot {snaps}/{a.name}: {snap.count()} rows at orders v{version_of(orders(a.target))}')
 
 
 def fingerprint(target: str) -> dict:
